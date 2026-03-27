@@ -15,11 +15,13 @@
   "type": "commonjs",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "electron main.js"
   },
   "dependencies": {
     "chart.js": "^4.5.1",
     "express": "^5.2.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "electron": "^41.1.0"
+  }
 }
