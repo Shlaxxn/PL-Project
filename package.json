@@ -1,5 +1,25 @@
 {
+  "name": "pl-project",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Shlaxxn/PL-Project#readme",
+  "bugs": {
+    "url": "https://github.com/Shlaxxn/PL-Project/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shlaxxn/PL-Project.git"
+  },
+  "license": "ISC",
+  "author": "jacob bohlmann",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
-    "chart.js": "^4.5.1"
-  }
+    "chart.js": "^4.5.1",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {}
 }
