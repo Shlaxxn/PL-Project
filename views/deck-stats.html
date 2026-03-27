@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deck Stats Viewer</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 2rem auto; line-height: 1.5; padding: 0 1rem; }
+    nav { margin-bottom: 1.2rem; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.5rem; }
+    nav a { color: #1e40af; margin-right: 1rem; font-weight: 700; text-decoration: none; padding-bottom: 0.1rem; }
+    nav a.active { border-bottom: 2px solid #1e3a8a; }
+    h1 { color: #1e3a8a; }
+    label { display: flex; flex-direction: column; font-weight: 600; margin-bottom: 0.8rem; }
+    select { padding: 0.55rem; font-size: 1rem; border: 1px solid #ccd0d5; border-radius: 4px; }
+    .warning { color: #b91c1c; font-weight: 600; margin-bottom: 0.75rem; }
+    .stats-panel { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; background: #f9fafb; }
+    .stat-item { border: 1px solid #e5e7eb; border-radius: 6px; padding: 0.7rem; margin-bottom: 0.6rem; }
+    .stat-item p { margin: 0.1rem 0; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="home.html">Decks</a>
+    <a href="game-stats.html">Game Stats</a>
+    <a class="active" href="deck-stats.html">Deck Stats</a>
+  </nav>
+
+  <h1>Deck Stats Viewer</h1>
+  <p>Choose a saved deck to see all matching saved game stats.</p>
+
+  <label>
+    Select Deck
+    <select id="deckSelect">
+      <option value="">-- Select a deck --</option>
+    </select>
+  </label>
+
+  <div id="deckMessage" class="warning" style="display:none;"></div>
+
+  <section class="stats-panel">
+    <h2>Game Stats</h2>
+    <div id="statsSummary"></div>
+    <div id="statsList"></div>
+  </section>
+
+  <script>
+    const DECK_STORAGE_KEY = 'savedDecks';
+    const GAME_STORAGE_KEY = 'savedGameStats';
+
+    function loadJSON(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function populateDeckSelect() {
+      const decks = loadJSON(DECK_STORAGE_KEY);
+      const select = document.getElementById('deckSelect');
+      select.innerHTML = '<option value="">-- Select a deck --</option>';
+
+      if (!decks.length) {
+        document.getElementById('deckMessage').textContent = 'No decks saved yet. Please add decks on the Decks page.';
+        document.getElementById('deckMessage').style.display = 'block';
+        return;
+      }
+
+      document.getElementById('deckMessage').style.display = 'none';
+
+      decks.forEach(deck => {
+        const option = document.createElement('option');
+        option.value = deck.name;
+        option.textContent = deck.name;
+        select.appendChild(option);
+      });
+    }
+
+    function renderStatsForDeck(deckName) {
+      const statsSummary = document.getElementById('statsSummary');
+      const statsList = document.getElementById('statsList');
+      const allStats = loadJSON(GAME_STORAGE_KEY);
+      const filtered = allStats.filter(s => s.deckName === deckName);
+      statsSummary.innerHTML = '';
+      statsList.innerHTML = '';
+
+      if (!deckName) {
+        statsSummary.innerHTML = '<p>Select a deck to view aggregated stats.</p>';
+        statsList.innerHTML = '<p>Select a deck to view its stats.</p>';
+        return;
+      }
+
+      if (!filtered.length) {
+        statsSummary.innerHTML = '<p>No stats for this deck yet. Log games on the Game Stats page.</p>';
+        statsList.innerHTML = '<p>No stats for this deck yet. Log games on the Game Stats page.</p>';
+        return;
+      }
+
+      const totals = { wins: 0, losses: 0, draws: 0, turnSum: 0 };
+      const seatData = {
+        '1': { games: 0, wins: 0 },
+        '2': { games: 0, wins: 0 },
+        '3': { games: 0, wins: 0 },
+        '4': { games: 0, wins: 0 },
+      };
+
+      filtered.forEach((stat) => {
+        const result = stat.result.toLowerCase();
+        if (result === 'win') totals.wins += 1;
+        else if (result === 'loss' || result === 'lose' || result === 'loses') totals.losses += 1;
+        else if (result === 'draw') totals.draws += 1;
+
+        const turnNum = Number(stat.turn) || 0;
+        totals.turnSum += turnNum;
+
+        const seat = String(stat.seats);
+        if (seatData[seat]) {
+          seatData[seat].games += 1;
+          if (result === 'win') {
+            seatData[seat].wins += 1;
+          }
+        }
+      });
+
+      const totalGames = filtered.length;
+      const avgTurn = totalGames ? (totals.turnSum / totalGames).toFixed(2) : '0.00';
+
+      const seatRows = Object.entries(seatData).map(([seat, info]) => {
+        const pct = info.games ? ((info.wins / info.games) * 100).toFixed(1) : '0.0';
+        return `<p>Seat ${seat}: ${info.wins}/${info.games} wins (${pct}%)</p>`;
+      }).join('');
+
+      statsSummary.innerHTML = `
+        <div class="stat-item">
+          <p><strong>Total Games:</strong> ${totalGames}</p>
+          <p><strong>Wins:</strong> ${totals.wins}</p>
+          <p><strong>Losses:</strong> ${totals.losses}</p>
+          <p><strong>Draws:</strong> ${totals.draws}</p>
+          <p><strong>Average Turn:</strong> ${avgTurn}</p>
+          <p><strong>Seat win rates:</strong></p>
+          ${seatRows}
+        </div>
+      `;
+
+      filtered.forEach((stat, idx) => {
+        const item = document.createElement('div');
+        item.className = 'stat-item';
+        item.innerHTML = `<p><strong>Game ${idx + 1}</strong></p>
+                         <p><strong>Deck:</strong> ${stat.deckName}</p>
+                         <p><strong>Seats:</strong> ${stat.seats}</p>
+                         <p><strong>Result:</strong> ${stat.result}</p>
+                         <p><strong>Turn:</strong> ${stat.turn}</p>
+                         <p><strong>Notes:</strong> ${stat.notes || 'No notes'}</p>`;
+        statsList.appendChild(item);
+      });
+    }
+
+    document.getElementById('deckSelect').addEventListener('change', (e) => {
+      renderStatsForDeck(e.target.value);
+    });
+
+    populateDeckSelect();
+    renderStatsForDeck('');
+  </script>
+</body>
+</html>
