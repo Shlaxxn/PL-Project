@@ -13,7 +13,7 @@
   "license": "ISC",
   "author": "jacob bohlmann",
   "type": "commonjs",
-  "main": "server.js",
+  "main": "main.js",
   "scripts": {
     "start": "electron main.js"
   },
