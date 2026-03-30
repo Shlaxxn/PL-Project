@@ -12,6 +12,7 @@
     .stat-item { border: 1px solid #e5e7eb; border-radius: 6px; padding: 0.7rem; margin-bottom: 0.6rem; }
     .stat-item p { margin: 0.1rem 0; }
   </style>
+  
 </head>
 <body>
   <nav>
@@ -35,6 +36,7 @@
   <section class="stats-panel">
     <h2>Game Stats</h2>
     <div id="statsSummary"></div>
+    <div id="winrateTableContainer"></div>
     <div id="statsList"></div>
   </section>
 
@@ -82,11 +84,13 @@
 
       if (!deckName) {
         statsSummary.innerHTML = '<p>Select a deck to view aggregated stats.</p>';
-        return;
+      document.getElementById('winrateTableContainer').innerHTML = '';
+      return;
       }
 
       if (!filtered.length) {
         statsSummary.innerHTML = '<p>No stats for this deck yet. Log games on the Game Stats page.</p>';
+        document.getElementById('winrateTableContainer').innerHTML = '';
         return;
       }
 
@@ -135,6 +139,11 @@
           ${seatRows}
         </div>
       `;
+      if (typeof renderWinRateTable === 'function') {
+        renderWinRateTable('winrateTableContainer', filtered);
+      } else {
+        document.getElementById('winrateTableContainer').innerHTML = '<p>Win rate by month table unavailable.</p>';
+      }
 
       filtered.forEach((stat, idx) => {
         const item = document.createElement('div');
@@ -156,5 +165,7 @@
     populateDeckSelect();
     renderStatsForDeck('');
   </script>
+  <script src="stats-summary-charts.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>

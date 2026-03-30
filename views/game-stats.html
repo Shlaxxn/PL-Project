@@ -120,7 +120,8 @@
       stats.forEach((s, idx) => {
         const card = document.createElement('div'); card.className = 'item-card';
         const body = document.createElement('div');
-        body.innerHTML = `<p><strong>${s.deckName}</strong> | Seats: ${s.seats} | Result: ${s.result} | Turn: ${s.turn}</p><p>${s.notes || '<em>No notes</em>'}</p>`;
+        const submittedAt = s.submittedAt ? new Date(s.submittedAt).toLocaleString() : 'Unknown date';
+        body.innerHTML = `<p><strong>${s.deckName}</strong> | Seats: ${s.seats} | Result: ${s.result} | Turn: ${s.turn} | Submitted: ${submittedAt}</p><p>${s.notes || '<em>No notes</em>'}</p>`;
         const actions = document.createElement('div'); actions.className = 'actions';
         const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Remove';
         remove.addEventListener('click', () => { const updated = loadData().filter((_, i) => i !== idx); saveData(updated); render(); });
@@ -144,8 +145,9 @@
         alert('Deck name, seats, result, and turn are required.');
         return;
       }
+      const submittedAt = new Date().toISOString();
       const stats = loadData();
-      stats.push({ deckName, seats, result, turn, notes });
+      stats.push({ deckName, seats, result, turn, notes, submittedAt });
       saveData(stats);
       document.getElementById('statsForm').reset();
       populateDeckDropdown();
