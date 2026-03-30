@@ -4,13 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Deck Stats Viewer</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
-    body { font-family: Arial, sans-serif; max-width: 900px; margin: 2rem auto; line-height: 1.5; padding: 0 1rem; }
-    nav { margin-bottom: 1.2rem; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.5rem; }
-    nav a { color: #1e40af; margin-right: 1rem; font-weight: 700; text-decoration: none; padding-bottom: 0.1rem; }
-    nav a.active { border-bottom: 2px solid #1e3a8a; }
-    h1 { color: #1e3a8a; }
-    label { display: flex; flex-direction: column; font-weight: 600; margin-bottom: 0.8rem; }
     select { padding: 0.55rem; font-size: 1rem; border: 1px solid #ccd0d5; border-radius: 4px; }
     .warning { color: #b91c1c; font-weight: 600; margin-bottom: 0.75rem; }
     .stats-panel { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; background: #f9fafb; }
@@ -87,13 +82,11 @@
 
       if (!deckName) {
         statsSummary.innerHTML = '<p>Select a deck to view aggregated stats.</p>';
-        statsList.innerHTML = '<p>Select a deck to view its stats.</p>';
         return;
       }
 
       if (!filtered.length) {
         statsSummary.innerHTML = '<p>No stats for this deck yet. Log games on the Game Stats page.</p>';
-        statsList.innerHTML = '<p>No stats for this deck yet. Log games on the Game Stats page.</p>';
         return;
       }
 

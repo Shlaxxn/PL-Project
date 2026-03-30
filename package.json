@@ -1,6 +1,18 @@
 {
-  "name": "pl-project",
+  "name": "deck-stat-tracker",
   "version": "1.0.0",
+  "pkg": {
+    "assets": [
+      "views",
+      "main.js",
+      "node_modules/chart.js/dist/chart.umd.js",
+      "node_modules/deep-defaults/lib/index.js",
+      "node_modules/express/lib/express.js",
+      "node_modules/electron/dist",
+      "node_modules/sliced/index.js"
+    ]
+  },
+
   "description": "",
   "homepage": "https://github.com/Shlaxxn/PL-Project#readme",
   "bugs": {

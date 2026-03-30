@@ -1,0 +1,16 @@
+body { font-family: Arial, sans-serif; max-width: 900px; margin: 2rem auto; line-height: 1.5; padding: 0 1rem; }
+nav { margin-bottom: 1.2rem; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.5rem; }
+nav a { color: #1e40af; margin-right: 1rem; font-weight: 700; text-decoration: none; padding-bottom: 0.1rem; }
+nav a.active { border-bottom: 2px solid #1e3a8a; }
+h1 { color: #1e3a8a; }
+form { display: grid; gap: 0.6rem; margin-bottom: 1.2rem; border: 1px solid #ddd; padding: 1rem; border-radius: 8px; background: #f9fafb; }
+label { display: flex; flex-direction: column; font-weight: 600; gap: 0.25rem; }
+input[type="text"], input[type="url"] { padding: 0.55rem; font-size: 1rem; border: 1px solid #ccd0d5; border-radius: 4px; }
+button { width: 150px; padding: 0.65rem 0.8rem; border-radius: 5px; border: none; background: #2563eb; color: white; font-weight: 600; cursor: pointer; }
+button:hover { background: #1d4ed8; }
+.deck-list { margin-top: 0.8rem; }
+.deck-item { border: 1px solid #e5e7eb; padding: 0.75rem; border-radius: 7px; margin-bottom: 0.65rem; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.7rem; }
+.deck-item p { margin: 0; }
+.deck-actions a, .deck-actions button { font-size: 0.86rem; margin-left: 0.4rem; text-decoration: none; border: 1px solid #94a3b8; border-radius: 4px; color: #1e3a8a; background: #f1f5f9; padding: 0.28rem 0.6rem; }
+.deck-actions a:hover, .deck-actions button:hover { background: #e2e8f0; }
+
