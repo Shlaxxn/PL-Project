@@ -33,7 +33,7 @@
 
   <div id="deckMessage" class="warning" style="display:none;"></div>
 
-  <section class="stats-panel">
+  <section class="stats-panel" style = "background-color: #4f4f4f; color: #ffffff;">
     <h2>Game Stats</h2>
     <div id="statsSummary"></div>
     <div id="winrateTableContainer"></div>
@@ -95,12 +95,6 @@
       }
 
       const totals = { wins: 0, losses: 0, draws: 0, turnSum: 0 };
-      const seatData = {
-        '1': { games: 0, wins: 0 },
-        '2': { games: 0, wins: 0 },
-        '3': { games: 0, wins: 0 },
-        '4': { games: 0, wins: 0 },
-      };
 
       filtered.forEach((stat) => {
         const result = stat.result.toLowerCase();
@@ -110,23 +104,10 @@
 
         const turnNum = Number(stat.turn) || 0;
         totals.turnSum += turnNum;
-
-        const seat = String(stat.seats);
-        if (seatData[seat]) {
-          seatData[seat].games += 1;
-          if (result === 'win') {
-            seatData[seat].wins += 1;
-          }
-        }
       });
 
       const totalGames = filtered.length;
-      const avgTurn = totalGames ? (totals.turnSum / totalGames).toFixed(2) : '0.00';
-
-      const seatRows = Object.entries(seatData).map(([seat, info]) => {
-        const pct = info.games ? ((info.wins / info.games) * 100).toFixed(1) : '0.0';
-        return `<p>Seat ${seat}: ${info.wins}/${info.games} wins (${pct}%)</p>`;
-      }).join('');
+      const avgTurn = totalGames ? (totals.turnSum / totalGames).toFixed(0) : '0.00';
 
       statsSummary.innerHTML = `
         <div class="stat-item">
@@ -135,8 +116,6 @@
           <p><strong>Losses:</strong> ${totals.losses}</p>
           <p><strong>Draws:</strong> ${totals.draws}</p>
           <p><strong>Average Turn:</strong> ${avgTurn}</p>
-          <p><strong>Seat win rates:</strong></p>
-          ${seatRows}
         </div>
       `;
       if (typeof renderWinRateTable === 'function') {
@@ -149,8 +128,7 @@
         const item = document.createElement('div');
         item.className = 'stat-item';
         item.innerHTML = `<p><strong>Game ${idx + 1}</strong></p>
-                         <p><strong>Deck:</strong> ${stat.deckName}</p>
-                         <p><strong>Seats:</strong> ${stat.seats}</p>
+                         <p><strong>Seat:</strong> ${stat.seats}</p>
                          <p><strong>Result:</strong> ${stat.result}</p>
                          <p><strong>Turn:</strong> ${stat.turn}</p>
                          <p><strong>Notes:</strong> ${stat.notes || 'No notes'}</p>`;

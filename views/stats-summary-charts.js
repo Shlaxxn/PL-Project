@@ -1,3 +1,5 @@
+const { color } = require("chart.js/helpers");
+
  
 function computeCumulativeWinRates(stats) {
   // Sort stats by submittedAt
@@ -57,6 +59,8 @@ function renderWinRateTable(containerId, stats) {
   const labels = gameData.map(item => `${item.gameNumber}`);
   const data = gameData.map(item => item.winRate);
 
+  Chart.defaults.color = '#dddddd';
+
   new Chart(document.getElementById('winrateChart'), {
     type: 'line',
     data: {
@@ -64,8 +68,8 @@ function renderWinRateTable(containerId, stats) {
       datasets: [{
         label: 'Win Rate (%)',
         data: data,
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgb(228, 228, 228)',
+        backgroundColor: 'rgb(192, 192, 192)',
         tension: 0.1
       }]
     },

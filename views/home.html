@@ -16,7 +16,7 @@
   <h1>Deck URL Tracker</h1>
   <p>Save and open deck URLs for later visualizations.</p>
 
-  <form id="deckForm">
+  <form id="deckForm" style = "background-color: #4f4f4f; color: #ffffff;">
     <label>
       Deck Name
       <input id="deckName" type="text" placeholder="e.g. My Main Deck" required />
@@ -50,7 +50,7 @@
       decks.forEach((deck, idx) => {
         const node = document.createElement('div'); node.className = 'deck-item';
         const info = document.createElement('p');
-        info.innerHTML = `<strong>${deck.name}</strong><br><a href="${deck.url}" target="_blank" rel="noopener noreferrer">${deck.url}</a>`;
+        info.innerHTML = `<strong>${deck.name}</strong><br><a href="${deck.url}" target="_blank" rel="noopener noreferrer" style="color: #80a2ff;">${deck.url}</a>`;
         const actions = document.createElement('div'); actions.className = 'deck-actions';
         const openLink = document.createElement('a'); openLink.href = deck.url; openLink.target = '_blank'; openLink.rel = 'noopener noreferrer'; openLink.textContent = 'Open';
         const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Remove';
