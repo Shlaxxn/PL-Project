@@ -41,20 +41,12 @@
   </section>
 
   <script>
-    const DECK_STORAGE_KEY = 'savedDecks';
-    const GAME_STORAGE_KEY = 'savedGameStats';
+    const { ipcRenderer } = require('electron');
 
-    function loadJSON(key) {
-      try {
-        const raw = localStorage.getItem(key);
-        return raw ? JSON.parse(raw) : [];
-      } catch {
-        return [];
-      }
-    }
+    async function loadData() { return ipcRenderer.invoke('load-data'); }
 
-    function populateDeckSelect() {
-      const decks = loadJSON(DECK_STORAGE_KEY);
+    async function populateDeckSelect() {
+      const { decks } = await loadData();
       const select = document.getElementById('deckSelect');
       select.innerHTML = '<option value="">-- Select a deck --</option>';
 
@@ -74,10 +66,10 @@
       });
     }
 
-    function renderStatsForDeck(deckName) {
+    async function renderStatsForDeck(deckName) {
       const statsSummary = document.getElementById('statsSummary');
       const statsList = document.getElementById('statsList');
-      const allStats = loadJSON(GAME_STORAGE_KEY);
+      const { gameStats: allStats } = await loadData();
       const filtered = allStats.filter(s => s.deckName === deckName);
       statsSummary.innerHTML = '';
       statsList.innerHTML = '';
@@ -140,8 +132,11 @@
       renderStatsForDeck(e.target.value);
     });
 
-    populateDeckSelect();
-    renderStatsForDeck('');
+    Promise.all([populateDeckSelect(), renderStatsForDeck('')]).catch(error => {
+      console.error('Unable to load deck statistics:', error);
+      document.getElementById('deckMessage').textContent = 'Unable to load data.json. Check the Electron terminal for details.';
+      document.getElementById('deckMessage').style.display = 'block';
+    });
   </script>
   <script src="stats-summary-charts.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

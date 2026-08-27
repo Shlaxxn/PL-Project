@@ -34,17 +34,18 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'savedDecks';
+    const { ipcRenderer } = require('electron');
 
-    function loadDecks() {
-      try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; }
+    async function loadData() { return ipcRenderer.invoke('load-data'); }
+
+    async function saveDecks(decks) {
+      const data = await loadData();
+      await ipcRenderer.invoke('save-data', { ...data, decks });
     }
 
-    function saveDecks(decks) { localStorage.setItem(STORAGE_KEY, JSON.stringify(decks)); }
-
-    function render() {
+    async function render() {
       const container = document.getElementById('savedDecks');
-      const decks = loadDecks();
+      const { decks } = await loadData();
       container.innerHTML = '';
       if (!decks.length) { container.innerHTML = '<p>No saved decks yet.</p>'; return; }
       decks.forEach((deck, idx) => {
@@ -54,21 +55,24 @@
         const actions = document.createElement('div'); actions.className = 'deck-actions';
         const openLink = document.createElement('a'); openLink.href = deck.url; openLink.target = '_blank'; openLink.rel = 'noopener noreferrer'; openLink.textContent = 'Open';
         const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Remove';
-        remove.addEventListener('click', () => { const updated = loadDecks().filter((_, i) => i !== idx); saveDecks(updated); render(); });
+        remove.addEventListener('click', async () => { const { decks: currentDecks } = await loadData(); const updated = currentDecks.filter((_, i) => i !== idx); await saveDecks(updated); render(); });
         actions.append(openLink, remove); node.append(info, actions); container.appendChild(node);
       });
     }
 
-    document.getElementById('deckForm').addEventListener('submit', e => {
+    document.getElementById('deckForm').addEventListener('submit', async e => {
       e.preventDefault();
       const name = document.getElementById('deckName').value.trim();
       const url = document.getElementById('deckUrl').value.trim();
       if (!name || !url) { alert('Both deck name and URL are required.'); return; }
-      const decks = loadDecks(); decks.push({ name, url }); saveDecks(decks);
+      const { decks } = await loadData(); decks.push({ name, url }); await saveDecks(decks);
       document.getElementById('deckForm').reset(); render();
     });
 
-    render();
+    render().catch(error => {
+      console.error('Unable to load deck data:', error);
+      document.getElementById('savedDecks').innerHTML = '<p>Unable to load data.json. Check the Electron terminal for details.</p>';
+    });
   </script>
 </body>
 </html>

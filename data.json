@@ -1,0 +1,38 @@
+{
+  "decks": [
+    {
+      "name": "Atraxa Counters",
+      "url": "https://moxfield.com/decks/ckZEZ7Fgvk-0DjDLn8do-A"
+    },
+    {
+      "name": "Krenko Goblins",
+      "url": "https://moxfield.com/decks/xjrQVjXqMEi_WcUN3KiAAA"
+    }
+  ],
+  "gameStats": [
+    {
+      "deckName": "Atraxa Counters",
+      "seats": "2",
+      "result": "Win",
+      "turn": "8",
+      "notes": "Built a wide board and closed with a planeswalker ultimate.",
+      "submittedAt": "2026-08-18T19:30:00.000Z"
+    },
+    {
+      "deckName": "Atraxa Counters",
+      "seats": "4",
+      "result": "Loss",
+      "turn": "7",
+      "notes": "Could not answer an early combo piece.",
+      "submittedAt": "2026-08-19T20:15:00.000Z"
+    },
+    {
+      "deckName": "Krenko Goblins",
+      "seats": "3",
+      "result": "Win",
+      "turn": "6",
+      "notes": "Token pressure ended the game quickly.",
+      "submittedAt": "2026-08-20T18:45:00.000Z"
+    }
+  ]
+}

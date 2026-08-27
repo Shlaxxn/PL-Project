@@ -5,6 +5,7 @@
     "assets": [
       "views",
       "main.js",
+      "data.json",
       "node_modules/chart.js/dist/chart.umd.js",
       "node_modules/deep-defaults/lib/index.js",
       "node_modules/express/lib/express.js",
@@ -12,7 +13,6 @@
       "node_modules/sliced/index.js"
     ]
   },
-
   "description": "",
   "homepage": "https://github.com/Shlaxxn/PL-Project#readme",
   "bugs": {
@@ -27,7 +27,8 @@
   "type": "commonjs",
   "main": "main.js",
   "scripts": {
-    "start": "electron main.js"
+    "start": "electron main.js",
+    "verify-pages": "node verify-pages.js"
   },
   "dependencies": {
     "chart.js": "^4.5.1",
@@ -35,5 +36,8 @@
   },
   "devDependencies": {
     "electron": "^41.1.0"
+  },
+  "allowScripts": {
+    "electron@41.1.0": true
   }
 }

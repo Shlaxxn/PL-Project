@@ -76,21 +76,16 @@
   </div>
 
   <script>
-    const GAME_STORAGE_KEY = 'savedGameStats';
-    const DECK_STORAGE_KEY = 'savedDecks';
+    const { ipcRenderer } = require('electron');
 
-    function loadData() {
-      try { const raw = localStorage.getItem(GAME_STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; }
-    }
+    async function loadData() { const data = await ipcRenderer.invoke('load-data'); return data.gameStats; }
 
-    function loadDecks() {
-      try { const raw = localStorage.getItem(DECK_STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; }
-    }
+    async function loadDecks() { const data = await ipcRenderer.invoke('load-data'); return data.decks; }
 
-    function populateDeckDropdown() {
+    async function populateDeckDropdown() {
       const deckSelect = document.getElementById('statsDeckName');
       const warning = document.getElementById('deckWarning');
-      const decks = loadDecks();
+      const decks = await loadDecks();
       deckSelect.innerHTML = '<option value="">Select a deck name</option>';
 
       if (!decks.length) {
@@ -110,11 +105,14 @@
       });
     }
 
-    function saveData(items) { localStorage.setItem(GAME_STORAGE_KEY, JSON.stringify(items)); }
+    async function saveData(items) {
+      const data = await ipcRenderer.invoke('load-data');
+      await ipcRenderer.invoke('save-data', { ...data, gameStats: items });
+    }
 
-    function render() {
+    async function render() {
       const container = document.getElementById('savedGameStats');
-      const stats = loadData();
+      const stats = await loadData();
       container.innerHTML = '';
       if (!stats.length) { container.innerHTML = '<p>No game stats saved yet.</p>'; return; }
       stats.forEach((s, idx) => {
@@ -124,14 +122,14 @@
         body.innerHTML = `<p><strong>${s.deckName}</strong> | Seats: ${s.seats} | Result: ${s.result} | Turn: ${s.turn} | Submitted: ${submittedAt}</p><p>${s.notes || '<em>No notes</em>'}</p>`;
         const actions = document.createElement('div'); actions.className = 'actions';
         const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Remove';
-        remove.addEventListener('click', () => { const updated = loadData().filter((_, i) => i !== idx); saveData(updated); render(); });
+        remove.addEventListener('click', async () => { const currentStats = await loadData(); const updated = currentStats.filter((_, i) => i !== idx); await saveData(updated); render(); });
         actions.appendChild(remove); card.append(body, actions); container.appendChild(card);
       });
     }
 
-    document.getElementById('statsForm').addEventListener('submit', e => {
+    document.getElementById('statsForm').addEventListener('submit', async e => {
       e.preventDefault();
-      const decks = loadDecks();
+      const decks = await loadDecks();
       if (!decks.length) {
         alert('Please add at least one deck before saving game stats.');
         return;
@@ -146,16 +144,18 @@
         return;
       }
       const submittedAt = new Date().toISOString();
-      const stats = loadData();
+      const stats = await loadData();
       stats.push({ deckName, seats, result, turn, notes, submittedAt });
-      saveData(stats);
+      await saveData(stats);
       document.getElementById('statsForm').reset();
       populateDeckDropdown();
       render();
     });
 
-    populateDeckDropdown();
-    render();
+    Promise.all([populateDeckDropdown(), render()]).catch(error => {
+      console.error('Unable to load game data:', error);
+      document.getElementById('savedGameStats').innerHTML = '<p>Unable to load data.json. Check the Electron terminal for details.</p>';
+    });
   </script>
 </body>
 </html>
